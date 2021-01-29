@@ -1,0 +1,12 @@
+parameters:
+- name: image
+  type: string
+- name: tag
+  type: string
+
+steps:
+  - script: |
+      set -e
+      export IMAGE_URL="${{ parameters.image }}:${{ parameters.tag }}" 
+      docker build -t "${{ parameters.image }}:${{ parameters.tag }}" . --build-arg STORAGE_CONNECTION_STRING="$(AZURE_STORAGE_CONNECTION_STRING)" --build-arg IMAGE="$IMAGE_URL"
+    displayName: docker build

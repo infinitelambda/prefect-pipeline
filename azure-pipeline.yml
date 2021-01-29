@@ -1,0 +1,71 @@
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- name: ACR
+  value: ACR_URL
+- name: AZURE_STORAGE_CONNECTION_STRING 
+  value: AZURE_STORAGE_CONNECTION_STRING
+- name: ACR-USER
+  value: ACR_USER
+- name: ACR-PASSWORD
+  value: ACR_PASSWORD
+- name: PROJECT
+  value: prefect
+
+
+stages:
+- stage: deployment
+  jobs:
+  - job: detect
+    steps:
+       #detect any changes in the flows directory
+       - template: dataops/templates/detect-changes.yml
+         parameters:
+            include: flows/
+       
+  - job: register
+    dependsOn: detect
+    pool: private-agent
+    variables:
+       RESULT: $[dependencies.detect.outputs['detect.RESULT']]
+       IMAGE_URL: "$(ACR)/$(PROJECT):latest"
+    steps:
+       #register the flows that changed
+       - template: dataops/templates/register-flows.yml
+         parameters:
+            project: $(PROJECT)
+            flows: $RESULT
+  
+  - job: build
+    dependsOn: register
+    steps:
+       #build a docker image and push to ACR
+       - template: dataops/templates/docker-build.yml
+         parameters:
+              image: "$(ACR)/$(PROJECT)"
+              tag: latest
+                    
+       - template: dataops/templates/docker-login.yml
+         parameters:
+              repo: $(ACR)
+              user: $(ACR-USER)
+              password: $(ACR-PASSWORD)
+
+       - template: dataops/templates/docker-push.yml
+         parameters:
+             image: "$(ACR)/$(PROJECT)"
+             tag: latest
+
+trigger:
+  branches:
+     include:
+        - '*'
+  paths:
+     include:
+       - 'flows/'
+       - 'tasks/'
+       - 'config/'
+     exclude:
+       - '*'
+       - '*__init__.py*'

@@ -1,0 +1,16 @@
+parameters:
+- name: include
+  type: string
+- name: exclude
+  type: string
+  default: __init__.py
+
+#Detect changes and put them in a variable separated by comma
+steps:
+   - script: |
+       set -e
+       result=$(git diff-tree --no-commit-id --name-only -r --diff-filter=M --diff-filter=A $(git log -1 | grep -i commit | head -1 | awk '{print $2}') | grep ${{ parameters.include }} | grep -v ${{ parameters.exclude }} | awk -F/ '{print $2}' | sort -u | sed -n -e 'H;${x;s/\n/,/g;s/^,//;p;}')
+       echo $result
+       echo "##vso[task.setvariable variable=RESULT;isOutput=true]$result"
+     displayName: Detect changes
+     name: detect

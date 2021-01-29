@@ -1,0 +1,11 @@
+parameters:
+- name: image
+  type: string
+- name: tag
+  type: string
+
+steps:
+   - script: |
+       set -e
+       docker push "${{ parameters.image }}:${{ parameters.tag }}"
+     displayName: docker push

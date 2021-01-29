@@ -1,0 +1,12 @@
+parameters:
+- name: project
+  type: string
+- name: flows
+  type: string
+steps:
+  - script: |
+       export PYTHONPATH="${PYTHONPATH}:/prefect/tasks/:/prefect/utils/"
+       set -e 
+       if [[ ! -v $RESULT ]]; then flows=($(echo ${{ parameters.flows }} | tr ',' "\n")) && \
+       for flow in ${flows[@]}; do prefect register flow --file flows/$flow --project ${{ parameters.project }}; done;fi 
+    displayName: flow register

@@ -1,0 +1,13 @@
+parameters:
+- name: repo
+  type: string
+- name: user
+  type: string
+- name: password
+  type: string
+
+steps:
+   - script: |
+       set -e
+       az acr login -n ${{ parameters.repo }} --username ${{ parameters.user }} --password ${{ parameters.password }}
+     displayName: docker login
