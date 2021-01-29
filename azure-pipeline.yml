@@ -20,7 +20,7 @@ stages:
   - job: detect
     steps:
        #detect any changes in the flows directory
-       - template: dataops/templates/detect-changes.yml
+       - template: templates/detect-changes.yml
          parameters:
             include: flows/
        
@@ -32,7 +32,7 @@ stages:
        IMAGE_URL: "$(ACR)/$(PROJECT):latest"
     steps:
        #register the flows that changed
-       - template: dataops/templates/register-flows.yml
+       - template: templates/register-flows.yml
          parameters:
             project: $(PROJECT)
             flows: $RESULT
@@ -41,18 +41,18 @@ stages:
     dependsOn: register
     steps:
        #build a docker image and push to ACR
-       - template: dataops/templates/docker-build.yml
+       - template: templates/docker-build.yml
          parameters:
               image: "$(ACR)/$(PROJECT)"
               tag: latest
                     
-       - template: dataops/templates/docker-login.yml
+       - template: templates/docker-login.yml
          parameters:
               repo: $(ACR)
               user: $(ACR-USER)
               password: $(ACR-PASSWORD)
 
-       - template: dataops/templates/docker-push.yml
+       - template: templates/docker-push.yml
          parameters:
              image: "$(ACR)/$(PROJECT)"
              tag: latest

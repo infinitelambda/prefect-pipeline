@@ -10,7 +10,6 @@ This repository contains prefect code that is deployable via pipelines
 - **azure-pipeline.yml** ( azure devops pipeline yaml file that contains steps to deploy prefect flows )
 - **job_template.yaml** ( needed by the flow in order to always pull latest image PullPolicy=Always )
 - **templates** (folder containing azure pipelines templates)
----
 
 Prerequisites:
 - Prefect server up and running in Kubernetes
