@@ -40,7 +40,7 @@ stages:
   - job: build
     dependsOn: register
     steps:
-       #build a docker image and push to ACR
+       #build a docker image and push it to ACR
        - template: templates/docker-build.yml
          parameters:
               image: "$(ACR)/$(PROJECT)"
