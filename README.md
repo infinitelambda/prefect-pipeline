@@ -16,6 +16,7 @@ Prerequisites:
 - Prefect agent of type Kubernetes with labels prefect
 - Prefect project with name prefect
 - Agent pool in Azure DevOps with name private-agent that has access to the prefect-server
+- Storage Account Connection string where we can store our flows
 
 
 **How it works**
