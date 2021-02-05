@@ -6,9 +6,9 @@ variables:
   value: ACR_URL
 - name: AZURE_STORAGE_CONNECTION_STRING 
   value: AZURE_STORAGE_CONNECTION_STRING
-- name: ACR-USER
+- name: ACR_USER
   value: ACR_USER
-- name: ACR-PASSWORD
+- name: ACR_PASSWORD
   value: ACR_PASSWORD
 - name: PROJECT
   value: prefect
@@ -49,8 +49,8 @@ stages:
        - template: templates/docker-login.yml
          parameters:
               repo: $(ACR)
-              user: $(ACR-USER)
-              password: $(ACR-PASSWORD)
+              user: $(ACR_USER)
+              password: $(ACR_PASSWORD)
 
        - template: templates/docker-push.yml
          parameters:
