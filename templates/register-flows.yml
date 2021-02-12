@@ -1,12 +1,13 @@
 parameters:
 - name: project
   type: string
-- name: flows
-  type: string
+
 steps:
   - script: |
        export PYTHONPATH="${PYTHONPATH}:/prefect/tasks/:/prefect/utils/"
-       set -e 
-       if [[ ! -v $RESULT ]]; then flows=($(echo ${{ parameters.flows }} | tr ',' "\n")) && \
-       for flow in ${flows[@]}; do prefect register flow --file flows/$flow --project ${{ parameters.project }}; done;fi 
+       set -e
+       flows=($(ls flows/ | grep -v __init__.py | grep '.*\.py$'))
+       echo ${flows[@]}
+       prefect create project ${{ parameters.project }} --skip-if-exists
+       for flow in ${flows[@]}; do prefect register flow --file flows/$flow --project ${{ parameters.project }} --skip-if-flow-metadata-unchanged; done
     displayName: flow register

@@ -17,25 +17,15 @@ variables:
 stages:
 - stage: deployment
   jobs:
-  - job: detect
-    steps:
-       #detect any changes in the flows directory
-       - template: templates/detect-changes.yml
-         parameters:
-            include: flows/
-       
   - job: register
-    dependsOn: detect
     pool: private-agent
     variables:
-       RESULT: $[dependencies.detect.outputs['detect.RESULT']]
        IMAGE_URL: "$(ACR)/$(PROJECT):latest"
     steps:
        #register the flows that changed
        - template: templates/register-flows.yml
          parameters:
             project: $(PROJECT)
-            flows: $RESULT
   
   - job: build
     dependsOn: register
